@@ -24,7 +24,6 @@ class QuotesSpider(scrapy.Spider):
             body_soup = BeautifulSoup(body_html)
             username = None
             if username_html:
-                pri
                 username_soup = BeautifulSoup(username_html[0])
                 username = username_soup.get_text()
             body = body_soup.get_text()
