@@ -17,7 +17,7 @@ class QuotesSpider(scrapy.Spider):
     def parse(self, response):
         for quote in response.css('div.postcontent'):
             yield {
-                'postTitle': quote.css('span.titleText').extract(),
+                'postTitle': quote.css('div.postTitle').extract(),
                 'postDate': quote.css('div.postDate::text').get(),
                 'postBody': quote.css('div.postBody').extract(),
             }
