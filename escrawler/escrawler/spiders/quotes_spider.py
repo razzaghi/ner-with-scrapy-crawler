@@ -17,7 +17,7 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         for quote in response.css('div.postcontent'):
-            username_html = quote.css('div.username').extract()[0]
+            username_html = quote.css('div.username').extract()
             title_html = quote.css('div.postTitle').extract()[0]
             body_html = quote.css('div.postBody').extract()[0]
             title_soup = BeautifulSoup(title_html)
