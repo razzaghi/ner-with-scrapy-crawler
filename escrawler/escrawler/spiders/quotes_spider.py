@@ -22,10 +22,13 @@ class QuotesSpider(scrapy.Spider):
             body_html = quote.css('div.postBody').extract()[0]
             title_soup = BeautifulSoup(title_html)
             body_soup = BeautifulSoup(body_html)
-            username_soup = BeautifulSoup(username_html)
+            username = None
+            if username_html:
+                username_soup = BeautifulSoup(username_html[0])
+                username = username_soup.get_text()
             body = body_soup.get_text()
             title = title_soup.get_text()
-            username = username_soup.get_text()
+
             yield {
                 'username': username,
                 'postTitle': title,
