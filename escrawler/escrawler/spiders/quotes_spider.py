@@ -19,10 +19,10 @@ class QuotesSpider(scrapy.Spider):
             yield {
                 'postTitle': quote.css('div.postTitle::text').get(),
                 'postDate': quote.css('div.postDate::text').get(),
-                'postBody': quote.css('small.postBody::text').get(),
+                'postBody': quote.css('div.postBody::text').get(),
             }
-        page = response.url.split("/")[-2]
-        filename = f'quotes-{page}.html'
-        with open(filename, 'wb') as f:
-            f.write(response.body)
-        self.log(f'Saved file {filename}')
+        # page = response.url.split("/")[-2]
+        # filename = f'quotes-{page}.html'
+        # with open(filename, 'wb') as f:
+        #     f.write(response.body)
+        # self.log(f'Saved file {filename}')
