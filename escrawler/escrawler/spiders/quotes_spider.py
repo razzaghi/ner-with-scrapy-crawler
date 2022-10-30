@@ -17,9 +17,9 @@ class QuotesSpider(scrapy.Spider):
     def parse(self, response):
         for quote in response.css('div.postcontent'):
             yield {
-                'postTitle': quote.css('div.postcontent div.postContentHeader div.postContentHeaderLeft div.postTitle span.titleText font font::text').get(),
+                'postTitle': quote.css('span.titleText').extract(),
                 'postDate': quote.css('div.postDate::text').get(),
-                'postBody': quote.css('div.postBody::text').get(),
+                'postBody': quote.css('div.postBody').extract(),
             }
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
