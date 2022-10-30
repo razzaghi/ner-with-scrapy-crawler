@@ -1,4 +1,5 @@
 import scrapy
+from bs4 import BeautifulSoup
 
 
 class QuotesSpider(scrapy.Spider):
@@ -16,10 +17,16 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         for quote in response.css('div.postcontent'):
+            title_html = quote.css('div.postTitle').extract()[0]
+            body_html = quote.css('div.postBody').extract()[0]
+            title_soup = BeautifulSoup(title_html)
+            body_soup = BeautifulSoup(body_html)
+            body = body_soup.get_text()
+            title = title_soup.get_text()
             yield {
-                'postTitle': quote.css('div.postTitle').extract(),
+                'postTitle': title,
                 'postDate': quote.css('div.postDate::text').get(),
-                'postBody': quote.css('div.postBody').extract(),
+                'postBody': body,
             }
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
