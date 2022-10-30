@@ -15,6 +15,15 @@ class QuotesSpider(scrapy.Spider):
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
+    def generate_email(self, text):
+        return (str(text)+"@ysp.com").replace("\n", "")
+
+    def enter_removal(self, text):
+        return str(text).replace("\n", "")
+
+    def text_normalizer(self, text):
+        return str(text).replace("\n", "")
+
     def parse(self, response):
         for quote in response.css('div.post'):
             username_html = quote.css('div.username').extract()
@@ -25,15 +34,14 @@ class QuotesSpider(scrapy.Spider):
             username = None
             if username_html:
                 username_soup = BeautifulSoup(username_html[0])
-                username = username_soup.get_text()
+                username = self.enter_removal(username_soup.get_text())
             body = body_soup.get_text()
-            title = title_soup.get_text()
-
+            title = self.enter_removal(title_soup.get_text())
+            post_date = self.enter_removal(quote.css('div.postDate::text').get())
+            text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
             yield {
-                'username': username,
-                'postTitle': title,
-                'postDate': quote.css('div.postDate::text').get(),
-                'postBody': body,
+                'text': text,
+                'label': [],
             }
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
