@@ -50,8 +50,10 @@ class QuotesSpider(scrapy.Spider):
     def text_normalizer(self, text):
         return str(text).replace("\n", "")
 
-    def parse(self, response):
+    def parse(self, response, **kwargs):
+        print("------------------------- yes ----------------------------")
         for quote in response.css('div.post'):
+            print("------------------------- yes 2 ----------------------------")
             username_html = quote.css('div.username').extract()
             title_html = quote.css('div.postTitle').extract()[0]
             body_html = quote.css('div.postBody').extract()[0]
