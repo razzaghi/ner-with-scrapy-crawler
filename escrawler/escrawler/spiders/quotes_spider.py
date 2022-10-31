@@ -60,16 +60,15 @@ class QuotesSpider(scrapy.Spider):
             username = None
             if username_html:
                 username_soup = BeautifulSoup(username_html[0])
-                username = cleanmailtext(username_soup.get_text())
+                username = cleanmailtext(self.enter_removal(username_soup.get_text()))
             body = cleanmailtext(body_soup.get_text())
-            title = cleanmailtext(title_soup.get_text())
+            title = cleanmailtext(self.enter_removal(title_soup.get_text()))
             post_date = cleanmailtext(quote.css('div.postDate::text').get())
             text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
-            if len(body) > 200:
-                yield {
-                    'text': text,
-                    'label': [],
-                }
+            yield {
+                'text': text,
+                'label': [],
+            }
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
         # with open(filename, 'wb') as f:
