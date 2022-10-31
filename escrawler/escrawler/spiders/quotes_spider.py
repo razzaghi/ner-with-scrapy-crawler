@@ -65,10 +65,11 @@ class QuotesSpider(scrapy.Spider):
             title = cleanmailtext(title_soup.get_text())
             post_date = cleanmailtext(quote.css('div.postDate::text').get())
             text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
-            yield {
-                'text': text,
-                'label': [],
-            }
+            if len(body) > 200:
+                yield {
+                    'text': text,
+                    'label': [],
+                }
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
         # with open(filename, 'wb') as f:
