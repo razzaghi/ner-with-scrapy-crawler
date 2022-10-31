@@ -22,7 +22,9 @@ class TripadvisorSpider(scrapy.Spider):
         {
             "url": "https://www.tripadvisor.es/ShowTopic-g1-i12452-k2654162page_number-Noticias_de_Actualidad_Viajera-El_sofa_de_la_comunidad.html",
             "pages": 50},
-        {
+        ]
+
+    tripadvisor_urls_part_2 = [{
             "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k1810590page_number-Esto_es_muy_serio_CUIDADO_con_HERTZ-General_Discussion.html",
             "pages": 53},
         {
@@ -62,9 +64,7 @@ class TripadvisorSpider(scrapy.Spider):
 
         {"url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k3907738page_number-Edreams-General_Discussion.html",
          "pages": 158},
-        {
-            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12452-k3158072page_number-Historias_de_ultramar-El_sofa_de_la_comunidad.html',
-            "pages": 158},
+
         {
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12652-k10756607page_number-Telefono_contacto_tripadvisor-Soporte_tecnico.html',
             "pages": 49},
@@ -87,7 +87,7 @@ class TripadvisorSpider(scrapy.Spider):
         urls = []
 
         self.csv_writer.writerow(self.file_header)
-        for page in self.tripadvisor_urls:
+        for page in self.tripadvisor_urls_part_2:
             url = page["url"]
             page_count = page["pages"]
             for i in range(0, page_count - 1):
