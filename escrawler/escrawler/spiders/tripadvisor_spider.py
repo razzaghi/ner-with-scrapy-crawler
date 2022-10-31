@@ -1,15 +1,43 @@
+import csv
 import time
 
 import scrapy
 from bs4 import BeautifulSoup
-
 from escrawler.normalizer import cleanmailtext
 
 
-class QuotesSpider(scrapy.Spider):
-    name = "quotes"
+class TripadvisorSpider(scrapy.Spider):
+    name = "tripadvisor"
 
-    new_tripadvisor_urls = [
+    tripadvisor_urls = [
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i12452-k2561341page_number-JUEGO_Adivina_el_destino-El_sofa_de_la_comunidad.html",
+            "pages": 4859},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i12452-k2622435page_number-El_saber_no_ocupa_Lugar_Post_divulgativo_y_cultural-El_sofa_de_la_comunidad.html",
+            "pages": 87},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i12452-k3642616page_number-Juego_Citas_celebres_y_refranes-El_sofa_de_la_comunidad.html",
+            "pages": 164},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i12452-k2654162page_number-Noticias_de_Actualidad_Viajera-El_sofa_de_la_comunidad.html",
+            "pages": 50},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k1810590page_number-Esto_es_muy_serio_CUIDADO_con_HERTZ-General_Discussion.html",
+            "pages": 53},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k7652739page_number-Fraude_en_Booking_com_Cuidado-General_Discussion.html",
+            "pages": 81},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k1213999-IiiiCuidado_con_expedia_SON_UNOS_TIMADORES-General_Discussion.html",
+            "pages": 45},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k5574976page_number-Alquileres_por_airbnb_es-General_Discussion.html",
+            "pages": 171},
+        {
+            "url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k5013511page_number-Nunca_confies_en_Rumbo_es-General_Discussion.html",
+            "pages": 117},
+
         {
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5773864page_number-Comentarios_rentalcars_com-Viajes_en_coche.html',
             "pages": 73},
@@ -32,9 +60,6 @@ class QuotesSpider(scrapy.Spider):
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5793229page_number-Timo_con_la_fianza_en_alquiler_de_coches_DoyouSpain-Viajes_en_coche.html',
             "pages": 85},
 
-    ]
-
-    tripadvisor_urls = [
         {"url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k3907738page_number-Edreams-General_Discussion.html",
          "pages": 158},
         {
@@ -54,10 +79,15 @@ class QuotesSpider(scrapy.Spider):
             "pages": 838},
     ]
 
+    file_header = ['email', 'title', 'date', 'body']
+    tripadvisor_file = open('tripadvisor.csv', 'w', encoding="UTF-8")
+    csv_writer = csv.writer(tripadvisor_file)
 
     def start_requests(self):
         urls = []
-        for page in self.new_tripadvisor_urls:
+
+        self.csv_writer.writerow(self.file_header)
+        for page in self.tripadvisor_urls:
             url = page["url"]
             page_count = page["pages"]
             for i in range(0, page_count - 1):
@@ -98,13 +128,8 @@ class QuotesSpider(scrapy.Spider):
             post_date = cleanmailtext(quote.css('div.postDate::text').get())
             text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
             print(len(body))
-            yield {
-                'email': username,
-                'title': title,
-                'date': post_date,
-                'body': body,
-                'label': [],
-            }
+            data = [username, title, post_date, body]
+            self.csv_writer.writerow(data)
         # page = response.url.split("/")[-2]
         # filename = f'quotes-{page}.html'
         # with open(filename, 'wb') as f:
