@@ -55,6 +55,8 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
+        print(len(response.css('div.post')))
+        print("==================================================")
         for quote in response.css('div.post'):
             print("------------------------- yes 2 ----------------------------")
             username_html = quote.css('div.username').extract()
@@ -72,7 +74,10 @@ class QuotesSpider(scrapy.Spider):
             text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
             print(len(body))
             yield {
-                'text': text,
+                'email': username,
+                'title': title,
+                'date': post_date,
+                'body': body,
                 'label': [],
             }
         # page = response.url.split("/")[-2]
