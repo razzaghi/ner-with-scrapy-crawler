@@ -9,6 +9,31 @@ from escrawler.normalizer import cleanmailtext
 class QuotesSpider(scrapy.Spider):
     name = "quotes"
 
+    new_tripadvisor_urls = [
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5773864page_number-Comentarios_rentalcars_com-Viajes_en_coche.html',
+            "pages": 73},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5597911page_number-Cicar-Viajes_en_coche.html',
+            "pages": 21},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5597873page_number-Budget_Rent_a_Car-Viajes_en_coche.html',
+            "pages": 43},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5597939page_number-Goldcar-Viajes_en_coche.html',
+            "pages": 147},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k4193008page_number-SIXT_Rent_a_car_Sorpresa_desagradable-Viajes_en_coche.html',
+            "pages": 122},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k6834980page_number-FIREFLY_Que_experiencia_tienen_en_esta_rent_a_car-Viajes_en_coche.html',
+            "pages": 60},
+        {
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i26485-k5793229page_number-Timo_con_la_fianza_en_alquiler_de_coches_DoyouSpain-Viajes_en_coche.html',
+            "pages": 85},
+
+    ]
+
     tripadvisor_urls = [
         {"url": "https://www.tripadvisor.es/ShowTopic-g1-i11064-k3907738page_number-Edreams-General_Discussion.html",
          "pages": 158},
@@ -27,12 +52,12 @@ class QuotesSpider(scrapy.Spider):
         {
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12452-k2546279page_number-ILos_viajeros_se_presentan-El_sofa_de_la_comunidad.html',
             "pages": 838},
-
     ]
+
 
     def start_requests(self):
         urls = []
-        for page in self.tripadvisor_urls:
+        for page in self.new_tripadvisor_urls:
             url = page["url"]
             page_count = page["pages"]
             for i in range(0, page_count - 1):
