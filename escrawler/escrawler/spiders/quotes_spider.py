@@ -17,7 +17,7 @@ class QuotesSpider(scrapy.Spider):
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12652-k10756607page_number-Telefono_contacto_tripadvisor-Soporte_tecnico.html',
             "pages": 49},
         {
-            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12452-k3158072-o13100page_number-Historias_de_ultramar-El_sofa_de_la_comunidad.html',
+            "url": 'https://www.tripadvisor.es/ShowTopic-g1-i12452-k3158072page_number-Historias_de_ultramar-El_sofa_de_la_comunidad.html',
             "pages": 1311},
         {
             "url": 'https://www.tripadvisor.es/ShowTopic-g1-i11062-k11263396page_number-Destinia_com_opiniones-Package_Holidays.html',
