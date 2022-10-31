@@ -80,7 +80,7 @@ class TripadvisorSpider(scrapy.Spider):
     ]
 
     file_header = ['email', 'title', 'date', 'body']
-    tripadvisor_file = open('tripadvisor.csv', 'w', encoding="UTF-8")
+    tripadvisor_file = open('tripadvisor2.csv', 'w', encoding="UTF-8")
     csv_writer = csv.writer(tripadvisor_file)
 
     def start_requests(self):
