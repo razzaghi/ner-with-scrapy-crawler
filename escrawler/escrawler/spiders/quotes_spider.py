@@ -1,7 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
 
-from utils.normalizer import cleanmailtext
+from escrawler.escrawler.normalizer import cleanmailtext
 
 
 class QuotesSpider(scrapy.Spider):
