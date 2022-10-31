@@ -41,7 +41,7 @@ class QuotesSpider(scrapy.Spider):
                 urls.append(main_url)
 
         for url in urls:
-            time.sleep(5)
+            time.sleep(3)
             yield scrapy.Request(url=url, callback=self.parse)
 
     def generate_email(self, text):
@@ -55,9 +55,6 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
-        print(len(response))
-        print(len(response.css('div')))
-        print(len(response.css('div.post')))
         for quote in response.css('div.post'):
             print("------------------------- yes 2 ----------------------------")
             username_html = quote.css('div.username').extract()
