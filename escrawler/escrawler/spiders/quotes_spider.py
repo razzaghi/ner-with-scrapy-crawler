@@ -52,7 +52,6 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
-        print(response)
         for quote in response.css('div.post'):
             print("------------------------- yes 2 ----------------------------")
             username_html = quote.css('div.username').extract()
