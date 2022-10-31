@@ -65,6 +65,7 @@ class QuotesSpider(scrapy.Spider):
             title = cleanmailtext(self.enter_removal(title_soup.get_text()))
             post_date = cleanmailtext(quote.css('div.postDate::text').get())
             text = self.generate_email(username) + "\n" + title + "\n" + post_date + "\n" + body
+            print(len(body))
             yield {
                 'text': text,
                 'label': [],
