@@ -37,7 +37,7 @@ class DlapiperSpider(scrapy.Spider):
     def extract_url(self, response):
         print("---------------------- Start To Extract ----------------------")
         for href in response.xpath('//a/@href').getall():
-            if str(href).startswith("/") or str(href).startswith("http"):
+            if str(href).startswith("/") or str(href).startswith("http") and not str(href).__contains__(".pdf"):
                 if not str(href).__contains__(self.base_path):
                     url = self.base_path + href
                 else:
