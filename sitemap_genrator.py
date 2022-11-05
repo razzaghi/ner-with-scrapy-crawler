@@ -282,6 +282,20 @@ def FormatDate(datetime):
 
     return date
 
+def is_valid_url(url: str):
+    invalid_extensions = [".pdf",".doc",".docx",".xls",".xlsx",".ppt",".pptx",".jpg",".gif",".png",".json","zip",".js",".tar.gz",".7z",".webp","tel:","mail:"]
+    stop_chars = ["+"]
+    for invalid_extension in invalid_extensions:
+        if str(url).__contains__(invalid_extension):
+            return False
+
+    for stop_char in stop_chars:
+        if str(url).__contains__(stop_char):
+            return False
+
+    if url.startswith("http") and not url.startswith(InitialURL):
+        return False
+
 
 def ParseThread(url, data):
     temp_links = data.xpath('//a')
@@ -291,14 +305,16 @@ def ParseThread(url, data):
 
         if 'href' in temp_attrs:
             temp_url = temp_attrs.get('href')
-            temp_src = url
-            temp_value = temp_link.text
-            temp_url = temp_attrs.get('href')
 
-            path = JoinURL(temp_src, temp_url)
+            if is_valid_url(temp_url):
+                temp_src = url
+                temp_value = temp_link.text
+                temp_url = temp_attrs.get('href')
 
-            if path != False:
-                ProcessURL(path, temp_src)
+                path = JoinURL(temp_src, temp_url)
+
+                if path != False:
+                    ProcessURL(path, temp_src)
 
 
 def JoinURL(src, url):
