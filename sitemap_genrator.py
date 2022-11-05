@@ -206,35 +206,34 @@ class Crawl(threading.Thread):
         temp_object = None
 
         try:
-            if not str(self.obj['url']).__contains__("+"):
-                temp_req = Request(self.obj['url'], headers=request_headers)
-                try:
-                    temp_res = urlopen(temp_req)
-                    temp_code = temp_res.getcode()
-                    temp_type = temp_res.info()["Content-Type"]
+            temp_req = Request(self.obj['url'], headers=request_headers)
+            try:
+                temp_res = urlopen(temp_req)
+                temp_code = temp_res.getcode()
+                temp_type = temp_res.info()["Content-Type"]
 
-                    temp_status = temp_res.getcode()
-                    temp_object = temp_res
+                temp_status = temp_res.getcode()
+                temp_object = temp_res
 
-                    if temp_code == 200:
-                        if types in temp_type:
-                            temp_content = temp_res.read()
+                if temp_code == 200:
+                    if types in temp_type:
+                        temp_content = temp_res.read()
 
+                        # var_dump(temp_content)
+
+                        try:
+                            temp_data = fromstring(temp_content)
+                            temp_thread = threading.Thread(target=ParseThread, args=(self.obj['url'], temp_data))
+                            link_threads.append(temp_thread)
+                            temp_thread.start()
+                        except (RuntimeError, TypeError, NameError, ValueError):
+                            print('Content could not be parsed, perhaps it is XML? We do not support that yet.')
                             # var_dump(temp_content)
+                            pass
 
-                            try:
-                                temp_data = fromstring(temp_content)
-                                temp_thread = threading.Thread(target=ParseThread, args=(self.obj['url'], temp_data))
-                                link_threads.append(temp_thread)
-                                temp_thread.start()
-                            except (RuntimeError, TypeError, NameError, ValueError):
-                                print('Content could not be parsed, perhaps it is XML? We do not support that yet.')
-                                # var_dump(temp_content)
-                                pass
-
-                except:
-                    print(self.obj['url'])
-                    print("Error")
+            except:
+                print(self.obj['url'])
+                print("Error")
 
         except HTTPError as e:
             temp_status = e.code
@@ -374,14 +373,13 @@ def ProcessURL(url, src=None, obj=None):
             break
 
     if found == False:
-        if not url.__contains__("+"):
-            temp = {}
-            temp['url'] = url
-            temp['src'] = src
-            temp['obj'] = obj
-            temp['sta'] = None
+        temp = {}
+        temp['url'] = url
+        temp['src'] = src
+        temp['obj'] = obj
+        temp['sta'] = None
 
-            queue.append(temp)
+        queue.append(temp)
 
 
 def ProcessChecked(obj):
