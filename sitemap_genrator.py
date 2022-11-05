@@ -297,10 +297,11 @@ def is_valid_url(url: str):
             print("============== YES 2 ======================")
             return False
 
-    if url.startswith("http") and not url.startswith(InitialURL):
-        print(url)
-        print("============== YES 3 ======================")
-        return False
+    if url.startswith("http"):
+        if not url.startswith(InitialURL):
+            print(url)
+            print("============== YES 3 ======================")
+            return False
 
 
 def ParseThread(url, data):
