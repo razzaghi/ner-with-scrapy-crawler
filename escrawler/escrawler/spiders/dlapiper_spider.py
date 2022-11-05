@@ -53,7 +53,7 @@ class DlapiperSpider(scrapy.Spider):
                     if not url in self.urls:
                         self.urls.append(url)
 
-        for index, url in self.urls:
+        for index, url in enumerate(self.urls):
             if index > self.checked_index:
                 self.checked_index += 1
                 if not url in self.crawled_urls:
