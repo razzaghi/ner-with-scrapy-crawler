@@ -54,7 +54,7 @@ run_end = None
 run_dif = None
 
 filename = 'sitemap.xml'
-url_list_file = open('.csv', 'w', encoding="UTF-8")
+url_list_file = open('urls.csv', 'w', encoding="UTF-8")
 csv_writer = csv.writer(url_list_file)
 file_header = ['url']
 csv_writer.writerow(file_header)
