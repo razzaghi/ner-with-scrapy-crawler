@@ -282,18 +282,23 @@ def FormatDate(datetime):
 
     return date
 
+
 def is_valid_url(url: str):
-    invalid_extensions = [".pdf",".doc",".docx",".xls",".xlsx",".ppt",".pptx",".jpg",".gif",".png",".json","zip",".js",".tar.gz",".7z",".webp","tel:","mail:"]
+    invalid_extensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".jpg", ".gif", ".png", ".json",
+                          "zip", ".js", ".tar.gz", ".7z", ".webp", "tel:", "mail:"]
     stop_chars = ["+"]
     for invalid_extension in invalid_extensions:
         if str(url).__contains__(invalid_extension):
+            print("============== YES 1 ======================")
             return False
 
     for stop_char in stop_chars:
         if str(url).__contains__(stop_char):
+            print("============== YES 2 ======================")
             return False
 
     if url.startswith("http") and not url.startswith(InitialURL):
+        print("============== YES 3 ======================")
         return False
 
 
