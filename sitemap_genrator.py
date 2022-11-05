@@ -38,7 +38,9 @@ link_threads = []
 MaxThreads = 5
 
 # DWFINE YOUR URL - CUSTOM URL!
-InitialURL = 'https://www.dlapiper.com/en/us'
+base_address = 'https://www.dlapiper.com'
+address_prefix = '/en/us'
+InitialURL = base_address+address_prefix
 
 InitialURLInfo = urlparse(InitialURL)
 InitialURLLen = len(InitialURL.split('/'))
@@ -301,6 +303,9 @@ def is_valid_url(url: str):
 
     if url.startswith("http"):
         if not url.startswith(InitialURL):
+            return False
+    else:
+        if not url.startswith(address_prefix):
             return False
 
     return True
