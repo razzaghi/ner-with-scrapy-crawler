@@ -38,6 +38,9 @@ class DlapiperSpider(scrapy.Spider):
         print("---------------------- Start To Extract ----------------------")
         for href in response.xpath('//a/@href').getall():
             url = self.base_path + href
+            print("================")
+            print(url)
+            print("================")
             if not url in self.urls:
                 self.urls.append(url)
 
