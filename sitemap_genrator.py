@@ -5,7 +5,7 @@
 
 # Przemek Wiejak @ przemek@wiejak.app
 # GitHub: https://github.com/wiejakp/python-sitemap-generator
-
+import csv
 import email.utils as eut
 import sys
 import threading
@@ -54,6 +54,10 @@ run_end = None
 run_dif = None
 
 filename = 'sitemap.xml'
+url_list_file = open('.csv', 'w', encoding="UTF-8")
+csv_writer = csv.writer(url_list_file)
+file_header = ['url']
+csv_writer.writerow(file_header)
 
 request_headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0",
@@ -379,6 +383,7 @@ def ProcessURL(url, src=None, obj=None):
         temp['obj'] = obj
         temp['sta'] = None
 
+        csv_writer.writerow([url])
         queue.append(temp)
 
 
