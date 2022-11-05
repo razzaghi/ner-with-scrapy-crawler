@@ -37,18 +37,19 @@ class DlapiperSpider(scrapy.Spider):
     def extract_url(self, response):
         print("---------------------- Start To Extract ----------------------")
         for href in response.xpath('//a/@href').getall():
-            if not str(href).__contains__(self.base_path):
-                url = self.base_path + href
-            else:
-                url = href
-            url = url.replace(":443", "")
-            url = url.replace("http://", "https://")
+            if str(href).startswith("/") or str(href).startswith("http"):
+                if not str(href).__contains__(self.base_path):
+                    url = self.base_path + href
+                else:
+                    url = href
+                url = url.replace(":443", "")
+                url = url.replace("http://", "https://")
 
-            print("================")
-            print(url)
-            print("================")
-            if not url in self.urls:
-                self.urls.append(url)
+                print("================")
+                print(url)
+                print("================")
+                if not url in self.urls:
+                    self.urls.append(url)
 
         for url in self.urls:
             if not url in self.crawled_urls:
