@@ -9,8 +9,9 @@ class DlapiperSpider(scrapy.Spider):
     name = "dlapiper"
 
     start_url = "https://www.dlapiper.com/en/us/"
+    base_path = "https://www.dlapiper.com/"
 
-    urls = []
+    urls = ["https://www.dlapiper.com/en/us/"]
     crawled_urls = []
     fetched_urls = []
 
@@ -36,7 +37,7 @@ class DlapiperSpider(scrapy.Spider):
     def extract_url(self, response):
         print("---------------------- Start To Extract ----------------------")
         for href in response.xpath('//a/@href').getall():
-            url = href
+            url = self.base_path + href
             if not url in self.urls:
                 self.urls.append(url)
 
