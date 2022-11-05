@@ -1,10 +1,12 @@
-import sys
 import logging
+import sys
+
 from pysitemap import crawler
 
 if __name__ == '__main__':
     if '--iocp' in sys.argv:
         from asyncio import events, windows_events
+
         sys.argv.remove('--iocp')
         logging.info('using iocp')
         el = windows_events.ProactorEventLoop()
@@ -12,4 +14,5 @@ if __name__ == '__main__':
 
     # root_url = sys.argv[1]
     root_url = 'https://www.dlapiper.com'
-    crawler(root_url, out_file='sitemap.xml', exclude_urls=[".pdf", ".jpg", ".zip"])
+    crawler(root_url, out_file='sitemap.xml',
+            exclude_urls=[".pdf",".doc",".xlsx",".xls",".ppt",".pptx", ".gif", ".jpg", ".zip", ".png", ".css", ".webp", ".svg", ".json", ".webmanifest"])
