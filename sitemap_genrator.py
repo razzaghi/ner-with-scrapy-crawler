@@ -352,13 +352,14 @@ def ProcessURL(url, src=None, obj=None):
             break
 
     if found == False:
-        temp = {}
-        temp['url'] = url
-        temp['src'] = src
-        temp['obj'] = obj
-        temp['sta'] = None
+        if not url.__contains__("+"):
+            temp = {}
+            temp['url'] = url
+            temp['src'] = src
+            temp['obj'] = obj
+            temp['sta'] = None
 
-        queue.append(temp)
+            queue.append(temp)
 
 
 def ProcessChecked(obj):
