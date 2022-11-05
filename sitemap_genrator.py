@@ -303,6 +303,8 @@ def is_valid_url(url: str):
             print("============== YES 3 ======================")
             return False
 
+    return True
+
 
 def ParseThread(url, data):
     temp_links = data.xpath('//a')
