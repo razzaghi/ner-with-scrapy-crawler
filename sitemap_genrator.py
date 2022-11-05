@@ -116,7 +116,7 @@ class RunCrawler(threading.Thread):
             else:
                 print('Threads: ', len(threads), ' Queue: ', len(queue), ' Checked: ', len(checked), ' Link Threads: ',
                       len(link_threads) + 1)
-                time.sleep(1)
+                # time.sleep(1)
 
     def done(self):
         print('Checked: ', len(checked))
