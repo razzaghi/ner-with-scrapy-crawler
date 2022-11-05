@@ -1,10 +1,7 @@
 import csv
-import re
-from pathlib import Path
 
 import scrapy
 from bs4 import BeautifulSoup
-
 from escrawler.normalizer import cleanmailtext
 
 
@@ -15,6 +12,7 @@ class DlapiperSpider(scrapy.Spider):
 
     urls = []
     crawled_urls = []
+    fetched_urls = []
 
     file_header = ['page_title', 'category_type', 'category_name', 'category_level', "category_short_description",
                    'address', 'body', "related_categories"]
@@ -39,8 +37,19 @@ class DlapiperSpider(scrapy.Spider):
         print("---------------------------")
         page_soup = BeautifulSoup(response.body)
         for a in page_soup.find_all('a', href=True):
-            print("==========================")
-            print("Found the URL:", a['href'])
+            url = a['href']
+            if not url in self.urls:
+                self.urls.append(url)
+
+        for url in self.urls:
+            if not url in self.crawled_urls:
+                self.crawled_urls.append(url)
+                yield scrapy.Request(url=url, callback=self.extract_url)
+
+        if len(self.crawled_urls) == len(self.urls):
+            print("=================== All URLS Fetched =================")
+            for url in self.urls:
+                yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
