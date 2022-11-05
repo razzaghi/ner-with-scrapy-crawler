@@ -298,6 +298,7 @@ def is_valid_url(url: str):
             return False
 
     if url.startswith("http") and not url.startswith(InitialURL):
+        print(url)
         print("============== YES 3 ======================")
         return False
 
