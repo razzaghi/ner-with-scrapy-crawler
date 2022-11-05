@@ -9,7 +9,7 @@ class DlapiperSpider(scrapy.Spider):
     name = "dlapiper"
 
     start_url = "https://www.dlapiper.com/en/us/"
-    base_path = "https://www.dlapiper.com/"
+    base_path = "https://www.dlapiper.com"
 
     urls = ["https://www.dlapiper.com/en/us/"]
     crawled_urls = []
