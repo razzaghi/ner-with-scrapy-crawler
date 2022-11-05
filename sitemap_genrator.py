@@ -233,6 +233,7 @@ class Crawl(threading.Thread):
                                 pass
 
                 except:
+                    print(self.obj['url'])
                     print("Error")
 
         except HTTPError as e:
