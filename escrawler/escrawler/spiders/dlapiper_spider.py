@@ -34,7 +34,7 @@ class DlapiperSpider(scrapy.Spider):
         return str(text).replace("\n", "")
 
     def extract_url(self, response):
-        print("---------------------------")
+        print("---------------------- Start To Extract ----------------------")
         page_soup = BeautifulSoup(response.body)
         for a in page_soup.find_all('a', href=True):
             url = a['href']
@@ -48,8 +48,9 @@ class DlapiperSpider(scrapy.Spider):
 
         if len(self.crawled_urls) == len(self.urls):
             print("=================== All URLS Fetched =================")
-            for url in self.urls:
-                yield scrapy.Request(url=url, callback=self.parse)
+            print(len(self.urls))
+            # for url in self.urls:
+            #     yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
