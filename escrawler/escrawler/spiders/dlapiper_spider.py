@@ -35,7 +35,7 @@ class DlapiperSpider(scrapy.Spider):
 
     def extract_url(self, response):
         print("---------------------- Start To Extract ----------------------")
-        page_soup = BeautifulSoup(response.body)
+        page_soup = BeautifulSoup(response)
         for a in page_soup.find_all('a', href=True):
             url = a['href']
             if not url in self.urls:
