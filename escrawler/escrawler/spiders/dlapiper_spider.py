@@ -11,7 +11,7 @@ from escrawler.normalizer import cleanmailtext
 class DlapiperSpider(scrapy.Spider):
     name = "dlapiper"
 
-    start_url = "https://www.skadden.com/"
+    start_url = "https://www.dlapiper.com/en/us/"
 
     urls = []
     crawled_urls = []
@@ -22,23 +22,9 @@ class DlapiperSpider(scrapy.Spider):
     csv_writer = csv.writer(tripadvisor_file)
 
     def start_requests(self):
-        base_dir = Path(__file__).resolve().parent.parent.parent.parent
-
-        xml_file_path = str(base_dir) + f"/sitemaps/{self.name}.xml"
-        print("=================")
-        print(base_dir)
-        print(xml_file_path)
-        f = open(xml_file_path)
-        file_text = f.read()
-        pattern = '(?<=<loc>)[a-zA-z]+://[^\s]*(?=</loc>)'
-
-        urls = re.findall(pattern, file_text)
-        print(len(urls))
         print("=================")
         # urls = []
-        for url in urls:
-            print(url)
-            yield scrapy.Request(url=url, callback=self.parse)
+        yield scrapy.Request(url=self.start_url, callback=self.extract_url)
 
     def generate_email(self, text):
         return (str(text) + "@ysp.com").replace("\n", "")
@@ -49,9 +35,17 @@ class DlapiperSpider(scrapy.Spider):
     def text_normalizer(self, text):
         return str(text).replace("\n", "")
 
+    def extract_url(self, response):
+        print("---------------------------")
+        page_soup = BeautifulSoup(response.body)
+        for a in page_soup.find_all('a', href=True):
+            print("==========================")
+            print("Found the URL:", a['href'])
+
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
         page_soup = BeautifulSoup(response)
+        body = page_soup.css("body")
         page_text = cleanmailtext(page_soup.get_text())
         print(page_text)
         print("==================================================")
