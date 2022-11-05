@@ -10,6 +10,7 @@ class DlapiperSpider(scrapy.Spider):
 
     start_url = "https://www.dlapiper.com/en/us/"
     base_path = "https://www.dlapiper.com"
+    checked_index = 0
 
     urls = ["https://www.dlapiper.com/en/us/"]
     crawled_urls = []
@@ -37,24 +38,27 @@ class DlapiperSpider(scrapy.Spider):
     def extract_url(self, response):
         print("---------------------- Start To Extract ----------------------")
         for href in response.xpath('//a/@href').getall():
-            if str(href).startswith("/") or str(href).startswith("http") and not str(href).__contains__(".pdf"):
-                if not str(href).__contains__(self.base_path):
-                    url = self.base_path + href
-                else:
-                    url = href
-                url = url.replace(":443", "")
-                url = url.replace("http://", "https://")
+            if str(href).startswith("http") and str(href).startswith(self.base_path):
+                if str(href).startswith("/") or str(href).startswith("http") and not str(href).__contains__(".pdf"):
+                    if not str(href).__contains__(self.base_path):
+                        url = self.base_path + href
+                    else:
+                        url = href
+                    url = url.replace(":443", "")
+                    url = url.replace("http://", "https://")
 
-                print("================")
-                print(url)
-                print("================")
-                if not url in self.urls:
-                    self.urls.append(url)
+                    print("================")
+                    print(url)
+                    print("================")
+                    if not url in self.urls:
+                        self.urls.append(url)
 
-        for url in self.urls:
-            if not url in self.crawled_urls:
-                self.crawled_urls.append(url)
-                yield scrapy.Request(url=url, callback=self.extract_url)
+        for index, url in self.urls:
+            if index > self.checked_index:
+                self.checked_index += 1
+                if not url in self.crawled_urls:
+                    self.crawled_urls.append(url)
+                    yield scrapy.Request(url=url, callback=self.extract_url)
 
         if len(self.crawled_urls) == len(self.urls):
             print("=================== All URLS Fetched =================")
