@@ -38,7 +38,7 @@ link_threads = []
 MaxThreads = 5
 
 # DWFINE YOUR URL - CUSTOM URL!
-InitialURL = 'https://www.dlapiper.com/'
+InitialURL = 'https://www.dlapiper.com'
 
 InitialURLInfo = urlparse(InitialURL)
 InitialURLLen = len(InitialURL.split('/'))
