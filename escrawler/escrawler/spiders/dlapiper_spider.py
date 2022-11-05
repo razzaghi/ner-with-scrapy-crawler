@@ -51,7 +51,6 @@ class DlapiperSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         print("------------------------- yes ----------------------------")
-        print(len(response.css('a')))
         page_soup = BeautifulSoup(response)
         page_text = cleanmailtext(page_soup.get_text())
         print(page_text)
