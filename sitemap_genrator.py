@@ -6,18 +6,17 @@
 # Przemek Wiejak @ przemek@wiejak.app
 # GitHub: https://github.com/wiejakp/python-sitemap-generator
 
+import email.utils as eut
+import sys
 import threading
 import time
-import sys
-from urllib.request import urlopen
-from urllib.request import Request
-from urllib.request import HTTPError
+from pprint import pprint
 from urllib.parse import urljoin
 from urllib.parse import urlparse
-import email.utils as eut
+from urllib.request import HTTPError
+from urllib.request import Request
+from urllib.request import urlopen
 
-from pprint import pprint
-from var_dump import var_dump
 from lxml import etree
 from lxml.html.soupparser import fromstring
 
@@ -207,31 +206,34 @@ class Crawl(threading.Thread):
         temp_object = None
 
         try:
-            temp_req = Request(self.obj['url'], headers=request_headers)
-            temp_res = urlopen(temp_req)
-            temp_code = temp_res.getcode()
-            temp_type = temp_res.info()["Content-Type"]
+            if not str(self.obj['url']).__contains__("+"):
+                temp_req = Request(self.obj['url'], headers=request_headers)
+                try:
+                    temp_res = urlopen(temp_req)
+                    temp_code = temp_res.getcode()
+                    temp_type = temp_res.info()["Content-Type"]
 
-            temp_status = temp_res.getcode()
-            temp_object = temp_res
+                    temp_status = temp_res.getcode()
+                    temp_object = temp_res
 
-            if temp_code == 200:
-                if types in temp_type:
-                    temp_content = temp_res.read()
+                    if temp_code == 200:
+                        if types in temp_type:
+                            temp_content = temp_res.read()
 
-                    # var_dump(temp_content)
+                            # var_dump(temp_content)
 
-                    try:
-                        temp_data = fromstring(temp_content)
-                        temp_thread = threading.Thread(target=ParseThread, args=(self.obj['url'], temp_data))
-                        link_threads.append(temp_thread)
-                        temp_thread.start()
-                    except (RuntimeError, TypeError, NameError, ValueError):
-                        print('Content could not be parsed, perhaps it is XML? We do not support that yet.')
-                        # var_dump(temp_content)
-                        pass
+                            try:
+                                temp_data = fromstring(temp_content)
+                                temp_thread = threading.Thread(target=ParseThread, args=(self.obj['url'], temp_data))
+                                link_threads.append(temp_thread)
+                                temp_thread.start()
+                            except (RuntimeError, TypeError, NameError, ValueError):
+                                print('Content could not be parsed, perhaps it is XML? We do not support that yet.')
+                                # var_dump(temp_content)
+                                pass
 
-
+                except:
+                    print("Error")
 
         except HTTPError as e:
             temp_status = e.code
