@@ -289,18 +289,14 @@ def is_valid_url(url: str):
     stop_chars = ["+"]
     for invalid_extension in invalid_extensions:
         if str(url).__contains__(invalid_extension):
-            print("============== YES 1 ======================")
             return False
 
     for stop_char in stop_chars:
         if str(url).__contains__(stop_char):
-            print("============== YES 2 ======================")
             return False
 
     if url.startswith("http"):
         if not url.startswith(InitialURL):
-            print(url)
-            print("============== YES 3 ======================")
             return False
 
     return True
