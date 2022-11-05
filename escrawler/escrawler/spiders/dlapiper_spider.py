@@ -47,10 +47,10 @@ class DlapiperSpider(scrapy.Spider):
                     url = url.replace(":443", "")
                     url = url.replace("http://", "https://")
 
-                    print("================")
-                    print(url)
-                    print("================")
                     if not url in self.urls:
+                        print("================")
+                        print(url)
+                        print("================")
                         self.urls.append(url)
 
         for index, url in enumerate(self.urls):
