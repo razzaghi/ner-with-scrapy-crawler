@@ -1,4 +1,5 @@
 import csv
+from pathlib import Path
 
 import scrapy
 from bs4 import BeautifulSoup
@@ -23,8 +24,15 @@ class DlapiperSpider(scrapy.Spider):
 
     def start_requests(self):
         print("=================")
-        # urls = []
-        yield scrapy.Request(url=self.start_url, callback=self.extract_url)
+        urls = []
+        base_dir = Path(__file__).resolve().parent.parent.parent.parent
+
+        xml_file_path = str(base_dir) + f"/sitemaps/{self.name}.csv"
+        f = open(xml_file_path, encoding="UTF-8")
+        csv_reader = csv.DictReader(f)
+        for row in csv_reader:
+            url =row["url"]
+            yield scrapy.Request(url=url, callback=self.parse)
 
     def generate_email(self, text):
         return (str(text) + "@ysp.com").replace("\n", "")
