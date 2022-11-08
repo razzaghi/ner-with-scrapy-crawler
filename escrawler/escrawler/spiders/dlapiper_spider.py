@@ -125,24 +125,29 @@ class DlapiperSpider(scrapy.Spider):
 
         page_title_html = body.css("header h2.page-title").extract()[0]
         page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content = None
         if page_content_html:
             page_content_html = page_content_html[0]
+            page_content_soup = BeautifulSoup(page_content_html)
+            page_content = page_content_soup.get_text()
+
 
         page_short_desc_html = body.css(".content h4").extract()
+        category_short_description = None
         if page_short_desc_html:
             page_short_desc_html = page_short_desc_html[0]
+            page_short_desc_soup = BeautifulSoup(page_short_desc_html)
+            category_short_description = page_short_desc_soup.get_text()
+
 
         # related_services_html = body.css(".page-content .col--secondary .related-options").extract()[0]
 
         page_title_soup = BeautifulSoup(page_title_html)
-        page_content_soup = BeautifulSoup(page_content_html)
-        page_short_desc_soup = BeautifulSoup(page_short_desc_html)
-
         category_name = page_title_soup.get_text()
-        category_short_description = page_short_desc_soup.get_text()
-        if category_short_description:
+
+        if category_short_description is None:
             category_short_description = "-"
-        page_content = page_content_soup.get_text()
+
         level = self.get_level(post_address)
 
         return category_type, category_name, level, category_short_description, address, page_content, "-"
