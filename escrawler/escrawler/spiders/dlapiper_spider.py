@@ -265,22 +265,26 @@ class DlapiperSpider(scrapy.Spider):
         if scope is not None:
             body = response.css('body')
             if scope == self.SCOPE_WORK_CATEGORY:
+                print("==================== work ===================")
                 category_type, category_name, level, category_short_description, address, page_content, related_services = self.fetch_work_category(
                     response.url, post_address, scope, category_type, body)
                 if page_content:
                     self.work_csv_writer.writerow([category_type, category_name, level, category_short_description, address, page_content,
                          related_services])
             if scope == self.SCOPE_PROFILE:
+                print("==================== profile ===================")
                 title, contact_info, biography, related_categories, links = self.fetch_profile(
                     response.url, post_address, scope, body)
-                if contact_info:
+                if title:
                     self.profile_csv_writer.writerow([title, contact_info, biography, related_categories, links])
             if scope == self.SCOPE_EXPERIENCE:
+                print("==================== experience ===================")
                 title, description, related_categories, related_professionals, address = self.fetch_experience(
                     response.url, post_address, scope, body)
-                if description:
+                if title:
                     self.experience_csv_writer.writerow([title, description, related_categories, related_professionals, address])
             if scope == self.SCOPE_CONTACT_US:
+                print("==================== contact us ===================")
                 page_title, page_header, page_content = self.fetch_contact_us(
                     response.url, post_address, scope, body)
                 if page_content:
