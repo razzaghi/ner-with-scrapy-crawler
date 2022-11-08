@@ -224,9 +224,9 @@ class DlapiperSpider(scrapy.Spider):
             page_content = page_content_soup.get_text()
 
         contact_us_header = ["location", "contact_info", "description"]
-        print("========================================= contact us page title")
-        print(page_title)
-        print("========================================= /contact us page title")
+        # print("========================================= contact us page title")
+        # print(page_title)
+        # print("========================================= /contact us page title")
         return page_title, page_header, page_content
 
     def parse(self, response, **kwargs):
