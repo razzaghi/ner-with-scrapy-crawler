@@ -17,20 +17,18 @@ class DlapiperSpider(scrapy.Spider):
     fetched_urls = []
 
     work_category_header = ['category_type', 'category_name', 'category_level',
-                                "category_short_description",
-                                'address', 'body', "related_categories"]
+                            "category_short_description",
+                            'address', 'body', "related_categories"]
 
-    profile_category_header = ['category_type', 'category_name', 'category_level',
-                               "category_short_description",
-                               'address', 'body', "related_categories"]
+    profile_category_header = ['title', 'contact_info', 'biography',
+                               "related_categories", "links"]
 
-    experience_header = ['page_title', 'category_type', 'category_name', 'category_level', "category_short_description",
-                         'address', 'body', "related_categories"]
+    experience_header = ['title', 'description', 'related_categories', 'related_professionals',
+                         'address']
 
     about_us_header = ['section_title', 'body', 'related_sections']
 
-    contact_us_header = ['person', 'location', 'email', 'phone1', "phone2",
-                         'address', 'city', "state", "country"]
+    contact_us_header = ["location", "contact_info", "description"]
 
     work_category_tags = ["service", "services", "solutions", "solution", "sector", "sectors"]
     profile_category_tags = ["people", "profile", "focus", "peoples", "profiles", "focuses"]
@@ -131,14 +129,12 @@ class DlapiperSpider(scrapy.Spider):
             page_content_soup = BeautifulSoup(page_content_html)
             page_content = page_content_soup.get_text()
 
-
         page_short_desc_html = body.css(".content h4").extract()
         category_short_description = None
         if page_short_desc_html:
             page_short_desc_html = page_short_desc_html[0]
             page_short_desc_soup = BeautifulSoup(page_short_desc_html)
             category_short_description = page_short_desc_soup.get_text()
-
 
         # related_services_html = body.css(".page-content .col--secondary .related-options").extract()[0]
 
@@ -151,6 +147,85 @@ class DlapiperSpider(scrapy.Spider):
         level = self.get_level(post_address)
 
         return category_type, category_name, level, category_short_description, address, page_content, "-"
+
+    def fetch_profile(self, address, post_address, scope, body):
+
+
+        page_header_html = body.css("header.bio-header").extract()
+        person_title_html = body.css("header.bio-header h3").extract()
+        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content = None
+        page_header = None
+        person_title = None
+
+        if page_header_html:
+            page_header_html = page_header_html[0]
+            page_header_soup = BeautifulSoup(page_header_html)
+            page_header = page_header_soup.get_text()
+
+        if person_title_html:
+            person_title_html = person_title_html[0]
+            person_title_soup = BeautifulSoup(person_title_html)
+            person_title = person_title_soup.get_text()
+
+        if page_content_html:
+            page_content_html = page_content_html[0]
+            page_content_soup = BeautifulSoup(page_content_html)
+            page_content = page_content_soup.get_text()
+
+        # related_services_html = body.css(".page-content .col--secondary .related-options").extract()[0]
+
+        profile_category_header = ['title', 'contact_info', 'biography',
+                                   "related_categories", "links"]
+        return person_title, page_header, page_content, "-", "-"
+
+    def fetch_experience(self, address, post_address, scope, body):
+
+        page_title_html = body.css("h2.page-title").extract()[0]
+        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content = None
+        if page_content_html:
+            page_content_html = page_content_html[0]
+            page_content_soup = BeautifulSoup(page_content_html)
+            page_content = page_content_soup.get_text()
+
+        # related_services_html = body.css(".page-content .col--secondary .related-options").extract()[0]
+
+        page_title_soup = BeautifulSoup(page_title_html)
+        title = page_title_soup.get_text()
+
+        experience_header = ['title', 'description', 'related_categories', 'related_professionals',
+                             'address']
+        return title, page_content, "-", "-", address
+
+
+    def fetch_contact_us(self, address, post_address, scope, body):
+
+        page_title_html = body.css("h2.page-title").extract()
+        page_header_html = body.css("div.office-info").extract()
+        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content = None
+        page_header = None
+        page_title = None
+
+        if page_header_html:
+            page_header_html = page_header_html[0]
+            page_header_soup = BeautifulSoup(page_header_html)
+            page_header = page_header_soup.get_text()
+
+        if page_title_html:
+            page_title_html = page_title_html[0]
+            page_title_soup = BeautifulSoup(page_title_html)
+            page_title = page_title_soup.get_text()
+
+        if page_content_html:
+            page_content_html = page_content_html[0]
+            page_content_soup = BeautifulSoup(page_content_html)
+            page_content = page_content_soup.get_text()
+
+        contact_us_header = ["location", "contact_info", "description"]
+
+        return page_title, page_header, page_content
 
     def parse(self, response, **kwargs):
         url = response.url
@@ -193,10 +268,25 @@ class DlapiperSpider(scrapy.Spider):
                 category_type, category_name, level, category_short_description, address, page_content, related_services = self.fetch_work_category(
                     response.url, post_address, scope, category_type, body)
                 if page_content:
-                    self.work_csv_writer.writerow(
-                        [category_type, category_name, level, category_short_description, address, page_content,
+                    self.work_csv_writer.writerow([category_type, category_name, level, category_short_description, address, page_content,
                          related_services])
+            if scope == self.SCOPE_PROFILE:
+                title, contact_info, biography, related_categories, links = self.fetch_profile(
+                    response.url, post_address, scope, body)
+                if contact_info:
+                    self.work_csv_writer.writerow([title, contact_info, biography, related_categories, links])
+            if scope == self.SCOPE_EXPERIENCE:
+                title, description, related_categories, related_professionals, address = self.fetch_experience(
+                    response.url, post_address, scope, body)
+                if description:
+                    self.work_csv_writer.writerow([title, description, related_categories, related_professionals, address])
+            if scope == self.SCOPE_CONTACT_US:
+                page_title, page_header, page_content = self.fetch_contact_us(
+                    response.url, post_address, scope, body)
+                if page_content:
+                    self.work_csv_writer.writerow([page_title, page_header, page_content])
             print("==================================================")
+
         # for quote in response.css('div.post'):
         #     print("------------------------- yes 2 ----------------------------")
         #     username_html = quote.css('div.username').extract()
