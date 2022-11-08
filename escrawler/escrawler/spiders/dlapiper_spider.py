@@ -153,7 +153,7 @@ class DlapiperSpider(scrapy.Spider):
 
         page_header_html = body.css("header.bio-header").extract()
         person_title_html = body.css("header.bio-header h3").extract()
-        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content_html = body.css(".page-content .col--main").extract()
         page_content = None
         page_header = None
         person_title = None
@@ -182,7 +182,7 @@ class DlapiperSpider(scrapy.Spider):
     def fetch_experience(self, address, post_address, scope, body):
 
         page_title_html = body.css("h2.page-title").extract()[0]
-        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content_html = body.css(".page-content .col--main").extract()
         page_content = None
         if page_content_html:
             page_content_html = page_content_html[0]
@@ -203,7 +203,7 @@ class DlapiperSpider(scrapy.Spider):
 
         page_title_html = body.css("h2.page-title").extract()
         page_header_html = body.css("div.office-info").extract()
-        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        page_content_html = body.css(".page-content .col--main").extract()
         page_content = None
         page_header = None
         page_title = None
