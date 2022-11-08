@@ -3,7 +3,6 @@ from pathlib import Path
 
 import scrapy
 from bs4 import BeautifulSoup
-from escrawler.normalizer import cleanmailtext
 
 
 class DlapiperSpider(scrapy.Spider):
@@ -17,21 +16,62 @@ class DlapiperSpider(scrapy.Spider):
     crawled_urls = []
     fetched_urls = []
 
-    file_header = ['page_title', 'category_type', 'category_name', 'category_level', "category_short_description",
-                   'address', 'body', "related_categories"]
-    tripadvisor_file = open('.csv', 'w', encoding="UTF-8")
-    csv_writer = csv.writer(tripadvisor_file)
+    work_category_header = ['category_type', 'category_name', 'category_level',
+                                "category_short_description",
+                                'address', 'body', "related_categories"]
+
+    profile_category_header = ['category_type', 'category_name', 'category_level',
+                               "category_short_description",
+                               'address', 'body', "related_categories"]
+
+    experience_header = ['page_title', 'category_type', 'category_name', 'category_level', "category_short_description",
+                         'address', 'body', "related_categories"]
+
+    about_us_header = ['section_title', 'body', 'related_sections']
+
+    contact_us_header = ['person', 'location', 'email', 'phone1', "phone2",
+                         'address', 'city', "state", "country"]
+
+    work_category_tags = ["service", "services", "solutions", "solution", "sector", "sectors"]
+    profile_category_tags = ["people", "profile", "focus", "peoples", "profiles", "focuses"]
+    experience_page_tags = ["insight", "insights"]
+    about_us_page_tags = ["about", "about-us", "aboutus"]
+    contact_us_page_tags = ["contact", "contacts", "contact-us", "office", "offices", "contactus", "location",
+                            "locations"]
+
+    work_category_file = open('work_category.csv', 'w', encoding="UTF-8")
+    profile_category_file = open('profile_category.csv', 'w', encoding="UTF-8")
+    experience_page_file = open('experience.csv', 'w', encoding="UTF-8")
+    about_us_page_file = open('aboutus.csv', 'w', encoding="UTF-8")
+    contact_us_page_file = open('contactus.csv', 'w', encoding="UTF-8")
+
+    work_csv_writer = csv.writer(work_category_file)
+    profile_csv_writer = csv.writer(profile_category_file)
+    experience_csv_writer = csv.writer(experience_page_file)
+    about_us_csv_writer = csv.writer(about_us_page_file)
+    contact_us_csv_writer = csv.writer(contact_us_page_file)
+
+    SCOPE_WORK_CATEGORY = 0
+    SCOPE_PROFILE = 1
+    SCOPE_EXPERIENCE = 2
+    SCOPE_ABOUT_US = 3
+    SCOPE_CONTACT_US = 4
 
     def start_requests(self):
-        print("=================")
-        urls = []
         base_dir = Path(__file__).resolve().parent.parent.parent.parent
 
         xml_file_path = str(base_dir) + f"/sitemaps/{self.name}.csv"
         f = open(xml_file_path, encoding="UTF-8")
         csv_reader = csv.DictReader(f)
+
+        self.work_csv_writer.writerow(self.work_category_header)
+        self.profile_csv_writer.writerow(self.profile_category_header)
+        self.experience_csv_writer.writerow(self.experience_header)
+        self.about_us_csv_writer.writerow(self.about_us_header)
+        self.contact_us_csv_writer.writerow(self.contact_us_header)
+
         for row in csv_reader:
-            url =row["url"]
+            url = row["url"]
             yield scrapy.Request(url=url, callback=self.parse)
 
     def generate_email(self, text):
@@ -75,13 +115,83 @@ class DlapiperSpider(scrapy.Spider):
             # for url in self.urls:
             #     yield scrapy.Request(url=url, callback=self.parse)
 
+    def get_level(self, address: str):
+        return len(address.split("/")) - 1
+
+    def fetch_work_category(self, address, post_address, scope, category_type, body):
+        work_category_header = ['category_type', 'category_name', 'category_level',
+                                "category_short_description",
+                                'address', 'body', "related_categories"]
+
+        page_title_html = body.css("header h2.page-title").extract()[0]
+        page_content_html = body.css(".page-content .col--main .rich-text").extract()
+        if page_content_html:
+            page_content_html = page_content_html[0]
+
+        page_short_desc_html = body.css(".content h4").extract()
+        if page_short_desc_html:
+            page_short_desc_html = page_short_desc_html[0]
+
+        # related_services_html = body.css(".page-content .col--secondary .related-options").extract()[0]
+
+        page_title_soup = BeautifulSoup(page_title_html)
+        page_content_soup = BeautifulSoup(page_content_html)
+        page_short_desc_soup = BeautifulSoup(page_short_desc_html)
+
+        category_name = page_title_soup.get_text()
+        category_short_description = page_short_desc_soup.get_text()
+        if category_short_description:
+            category_short_description = "-"
+        page_content = page_content_soup.get_text()
+        level = self.get_level(post_address)
+
+        return category_type, category_name, level, category_short_description, address, page_content, "-"
+
     def parse(self, response, **kwargs):
-        print("------------------------- yes ----------------------------")
-        page_soup = BeautifulSoup(response)
-        body = page_soup.css("body")
-        page_text = cleanmailtext(page_soup.get_text())
-        print(page_text)
-        print("==================================================")
+        url = response.url
+        post_address = str(url[len(self.start_url):len(url) + 1])
+        scope = None
+
+        category_type = None
+        for tag in self.work_category_tags:
+            if str(post_address).lower().__contains__(tag.lower()):
+                scope = self.SCOPE_WORK_CATEGORY
+                category_type = tag
+
+        if scope is None:
+            for tag in self.profile_category_tags:
+                if str(post_address).lower().__contains__(tag.lower()):
+                    scope = self.SCOPE_PROFILE
+                    category_type = tag
+
+        if scope is None:
+            for tag in self.experience_page_tags:
+                if str(post_address).lower().__contains__(tag.lower()):
+                    scope = self.SCOPE_EXPERIENCE
+                    category_type = tag
+
+        if scope is None:
+            for tag in self.about_us_page_tags:
+                if str(post_address).lower().__contains__(tag.lower()):
+                    scope = self.SCOPE_ABOUT_US
+                    category_type = tag
+
+        if scope is None:
+            for tag in self.contact_us_page_tags:
+                if str(post_address).lower().__contains__(tag.lower()):
+                    scope = self.SCOPE_CONTACT_US
+                    category_type = tag
+
+        if scope is not None:
+            body = response.css('body')
+            if scope == self.SCOPE_WORK_CATEGORY:
+                category_type, category_name, level, category_short_description, address, page_content, related_services = self.fetch_work_category(
+                    response.url, post_address, scope, category_type, body)
+                if page_content:
+                    self.work_csv_writer.writerow(
+                        [category_type, category_name, level, category_short_description, address, page_content,
+                         related_services])
+            print("==================================================")
         # for quote in response.css('div.post'):
         #     print("------------------------- yes 2 ----------------------------")
         #     username_html = quote.css('div.username').extract()
