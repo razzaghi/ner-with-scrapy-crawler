@@ -274,17 +274,17 @@ class DlapiperSpider(scrapy.Spider):
                 title, contact_info, biography, related_categories, links = self.fetch_profile(
                     response.url, post_address, scope, body)
                 if contact_info:
-                    self.work_csv_writer.writerow([title, contact_info, biography, related_categories, links])
+                    self.profile_csv_writer.writerow([title, contact_info, biography, related_categories, links])
             if scope == self.SCOPE_EXPERIENCE:
                 title, description, related_categories, related_professionals, address = self.fetch_experience(
                     response.url, post_address, scope, body)
                 if description:
-                    self.work_csv_writer.writerow([title, description, related_categories, related_professionals, address])
+                    self.experience_csv_writer.writerow([title, description, related_categories, related_professionals, address])
             if scope == self.SCOPE_CONTACT_US:
                 page_title, page_header, page_content = self.fetch_contact_us(
                     response.url, post_address, scope, body)
                 if page_content:
-                    self.work_csv_writer.writerow([page_title, page_header, page_content])
+                    self.contact_us_csv_writer.writerow([page_title, page_header, page_content])
             print("==================================================")
 
         # for quote in response.css('div.post'):
